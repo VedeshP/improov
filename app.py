@@ -8,3 +8,11 @@ import datetime
 
 app = Flask(__name__)
 
+# Set a secret key for the application
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+
+@app.route("/")
+def flashing():
+    flash("this is a test flash")
+    return render_template("layout.html")
