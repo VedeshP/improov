@@ -180,8 +180,40 @@ body {
 
 /* temporary to check  */
 .icon {
-    fill: #000000;
+    fill: var(--page-bg-opp);
     display: inline-flex;
     z-index: 1;
     padding: 4px;
+}
+
+/* till here */
+
+.input-group-text {
+    background-color: var(--page-bg);
+    color: var(--page-bg-opp);
+    border-color: var(--hover-color);
+}
+
+
+.form-floating {
+    background-color: var(--hover-color);
+}
+
+.form-control {
+    background-color: var(--page-bg);
+    border-color: var(--primary-color);
+    color: var(--page-bg-opp)
+}
+
+
+.form-control:focus, .form-control:active {
+    background-color: var(--page-bg);
+    border-color: var(--primary-color);
+    color: var(--page-bg-opp);  /* Adding this to ensure text color is set */
+    box-shadow: 0 0 0 0.2rem var(--hover-color);  /* Adding a custom focus shadow */
+}
+
+/* Ensuring the floating labels also conform to dark theme */
+.form-floating > label {
+    color: var(--page-bg-opp);
 }
