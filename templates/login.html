@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block main %}
+    <form action="/login" method="POST">
+        <div class="input-group mb-3">
+            <span class="input-group-text">@</span>
+            <div class="form-floating">
+              <input type="text" class="form-control" id="floatingInputGroup1" placeholder="Username" name="username">
+              <label for="floatingInputGroup1">Username</label>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">*</span>
+            <div class="form-floating">
+              <input type="password" class="form-control" id="floatingInputGroup1" placeholder="Username" name="password">
+              <label for="floatingInputGroup1">Password</label>
+            </div>
+          </div>
+    </form>
+{% endblock %}

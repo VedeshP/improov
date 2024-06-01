@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Testing
+{% endblock %}
+
+{% block main %}
+    <style>
+        .embed {
+            border: solid 4px;
+            border-color:aquamarine;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px;
+            max-width: 500px; /* Adjust as needed */
+        }
+        .embed iframe {
+            width: 100%;
+            height: 300px; /* Adjust as needed */
+        }
+    </style>
+    <div class="post">
+        <div class="post-main">
+            {{ post.content }}
+            {% if post.preview %}
+                {% if post.preview.is_embed %}
+                    <div class="embed">
+                        {{ post.preview.html | safe }}
+                    </div>
+                {% else %}
+                    <div class="link-preview">
+                        {{ post.preview.html | safe }}
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
