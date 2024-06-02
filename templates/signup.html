@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/signup" methods="POST">
+    <form action="/signup" method="post">
         <div class="input-group mb-3">
             <span class="input-group-text">Name</span>
             <div class="form-floating">
-            <input type="text" class="form-control" id="floatingInputGroup1" placeholder="Username" name="display_name">
+            <input type="text" class="form-control" id="floatingInputGroup1" placeholder="Display Name" name="display_name">
             <label for="floatingInputGroup1">Display Name</label>
             </div>
         </div>
@@ -21,7 +21,7 @@
                     </svg>
             </span>
             <div class="form-floating">
-            <input type="text" class="form-control" id="floatingInputGroup1" placeholder="Username" name="email">
+            <input type="email" class="form-control" id="floatingInputGroup1" placeholder="Email" name="email">
             <label for="floatingInputGroup1">Email Id</label>
             </div>
         </div>
@@ -35,14 +35,14 @@
         <div class="input-group mb-3">
             <span class="input-group-text">*</span>
             <div class="form-floating">
-            <input type="password" class="form-control" id="floatingInputGroup1" placeholder="Username" name="password">
+            <input type="password" class="form-control" id="floatingInputGroup1" placeholder="Password" name="password">
             <label for="floatingInputGroup1">Password</label>
             </div>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">**</span>
             <div class="form-floating">
-            <input type="password" class="form-control" id="floatingInputGroup1" placeholder="Username" name="confirm_password">
+            <input type="password" class="form-control" id="floatingInputGroup1" placeholder="Confirm Password" name="confirm_password">
             <label for="floatingInputGroup1">Confirm Password</label>
             </div>
         </div>
@@ -51,7 +51,36 @@
             <input type="date" id="birthday" name="birthday">
         </div>
         <div style="padding: 20px">
-            <button class="btn btn-outline-success" type="submit">Submit</button>
+            <button class="btn btn-outline-success" type="submit">Sign Up</button>
         </div>
     </form>
+
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Username and Password Rules
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body" style="text-align: left;">
+                    <strong>Abiding to the following rules is necessary: </strong>
+                    <ul>
+                        <li><strong>Username:</strong>
+                            <ol>
+                                <li>Username must be unique</li>
+                                <li>Must be well designed</li>
+                            </ol>
+                        </li>
+                        <li><strong>Password:</strong>
+                            <ol>
+                                <li>Password must be strong</li>
+                                <li>Password must be alphanumeric and should contain special characters</li>
+                                <li>Password must contain atleast one of the special characters from !@#$%^&*()-+?_=,<>/"</li>
+                            </ol>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 {% endblock %}

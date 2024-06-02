@@ -162,6 +162,17 @@
           </div>
       </nav>
   </header>
+  {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-primary mb-0 text-center" role="alert">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+   {% endwith %}
 
         <main class="container py-5 text-center">
           {% block main %}{% endblock %}

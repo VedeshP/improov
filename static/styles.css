@@ -438,3 +438,12 @@ input[type="date"] {
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: var(--invert-filter);
 }
+
+.accordion {
+    filter: var(--invert-filter);
+}
+
+.accordion:active {
+    filter: var(--invert-filter);
+    box-shadow: 0 0 0 0.2rem var(--hover-color);   
+}
