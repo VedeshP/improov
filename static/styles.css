@@ -56,7 +56,7 @@ body {
 
 
 .custom-button {
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     border-width: 0px;
     background-color: var(--primary-color);
     color: var(--page-bg);
@@ -178,16 +178,6 @@ body {
     margin: auto;
 }
 
-/* temporary to check  */
-.icon {
-    fill: var(--page-bg-opp);
-    display: inline-flex;
-    z-index: 1;
-    padding: 4px;
-}
-
-/* till here */
-
 .input-group-text {
     background-color: var(--page-bg);
     color: var(--page-bg-opp);
@@ -216,4 +206,235 @@ body {
 /* Ensuring the floating labels also conform to dark theme */
 .form-floating > label {
     color: var(--page-bg-opp);
+}
+
+.container-custom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    flex-direction: column;
+}
+
+.post {
+    border: 4px solid;
+    border-radius: 12px;
+    border-color: var(--primary-color);
+    width: 100%;
+    max-width: 600px;
+    max-height: 800px;
+    background-color: var(--page-bg);
+    padding: 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    margin: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .post {
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 769px) {
+    .post {
+        max-width: 600px;
+    }
+}
+
+#username-text {
+    padding: 4px;
+}
+
+.post-initial {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border: 0px solid;
+    border-color: var(--hover-color);
+    border-bottom-width: 1px;
+}
+
+#follow {
+    margin-left: auto;
+    color: var(--hover-color);
+    padding: 8px;
+}
+
+
+#sub-topic {
+    margin-left: auto;
+}
+
+.post-main {
+    max-width: 600px;
+    max-height: 800px;
+    overflow-y: auto;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0px solid;
+    border-color: var(--hover-color);
+    border-top-width: 1px;
+    margin-top: 8px;
+    margin-bottom: -8px;
+}
+
+.post-icon-actions {
+    margin: auto;
+    padding-top: 4px;
+}
+
+.icon {
+    fill: var(--page-bg-opp);
+    display: inline-flex;
+    z-index: 1;
+    padding: 4px;
+}
+
+.custom-navbar-bottom {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--page-bg);
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 64px;
+    border: 0px solid;
+    border-color: var(--hover-color);
+    border-top-width: 1px;
+    margin: auto;
+}  
+
+.custom-navbar-bottom a {
+    float: left;
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    margin: auto;
+    transition: 0.3s;
+}
+
+.custom-navbar-bottom a:hover {
+    background-color: var(--primary-color);
+    border-radius: 20px;
+}
+
+.custom-navbar-bottom a.active {
+    background-color:var(--primary-color);
+    border-radius: 20px;
+}
+
+/* New CSS for hiding the navbar */
+.custom-navbar-bottom.hidden {
+    transform: translateY(100%); /* Move the navbar out of view */
+    transition: var(--default-transition);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    margin: 4px;
+    background: var(--page-bg);
+    border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #A0A0A0;
+    border-radius: 12px;
+    border: solid 2px;
+    border-color: var(--page-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #696969;
+}
+
+
+.embed {    
+    border-radius: var(--default-border-radius);
+    padding: 10px;
+    margin: 10px;
+    max-width: 500px; /* Adjust as needed */
+}
+.embed iframe {
+    width: 100%;
+    height: 100%; /* Adjust as needed */
+}
+
+.form-custom {
+    padding: 4px;
+    border: solid 4px;
+    border-radius: 12px;
+    border-color: var(--primary-color) !important;
+    width: 100%; /* Ensure it takes full width of container */
+    max-width: 600px; /* Maximum width constraint */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+@media (max-width: 768px) {
+    .form-custom {
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 769px) {
+    .form-custom {
+        max-width: 600px;
+    }
+}
+
+.user-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    justify-content: left;
+}
+
+#select-menu {
+    padding: 20px;
+    border-bottom: solid 1px;
+    border-color: var(--hover-color);
+    margin: 8px;
+}
+
+#links {
+    margin: 8px;
+    border-top: 1px solid;
+    border-color: var(--hover-color);
+    padding: 8px;
+}
+
+.post-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+::-webkit-datetime-edit {
+    padding: 4px;
+}
+
+input[type="date"] { 
+    background: transparent;
+    color: var(--page-bg-opp);
+    border-radius: 12px;
+    border-color: var(--primary-color);
+    width: 50%;
+    text-align: center;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: var(--invert-filter);
 }
