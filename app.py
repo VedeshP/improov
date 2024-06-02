@@ -40,16 +40,18 @@ def after_request(response):
     return response
 
 
-@app.route("/")
+@app.route("/", methods=["GET","POST"])
 # @login_required
 def index():
-    
-    return render_template("index.html", login=True)
+    if request.method == "POST":
+        ...
+    else:
+        return render_template("index.html", login=True, show_taskbar = True, active_page = 'home')
 
 
 @app.route("/know-more")
 def know_more():
-    ...
+    render_template("know-more.html", show_taksbar = False)
 
 
 @app.route("/login" , methods = ["GET","POST"])
@@ -57,12 +59,14 @@ def login():
     if request.method == "POST":
         ...
     else:
-        return render_template("login.html")
+        return render_template("login.html", show_taskbar = False)
 
 
 @app.route("/logout")
 def logout():
-    ...
+    # Forget user
+    session.clear()
+    return redirect("/know-more")
 
 
 @app.route("/signup", methods = ["GET", "POST"])
@@ -70,31 +74,34 @@ def signup():
     if request.method == "POST":
         ...
     else:
-        return render_template("signup.html")
+        return render_template("signup.html", show_taskbar = False)
 
 
-@app.route("/post")
+@app.route("/post", methods = ["GET", "POST"])
 # @login_required
 def post():
-    ...
+    if request.method == "POST":
+        ...
+    else:
+        return render_template("post.html", active_page = 'post', show_taskbar= True)
 
 
 @app.route("/communities")
 # @login_required
 def communities():
-    ...
+    return render_template("communites.html", show_taskbar = True, active_page = 'communities')
 
 
 @app.route("/courses")
 # @login_required
 def courses():
-    ...
+    return render_template("courses.html", active_page = 'courses')
 
 
 @app.route("/blog")
 # @login_required
 def blog():
-    ...
+    return render_template("blog.html", show_taskbar = True, active_page = 'blog')
 
 
 @app.route("/likes")
