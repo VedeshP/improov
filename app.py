@@ -42,7 +42,7 @@ def after_request(response):
 
 
 @app.route("/", methods=["GET","POST"])
-# @login_required
+@login_required
 def index():
     if request.method == "POST":
         ...
@@ -52,7 +52,7 @@ def index():
 
 @app.route("/know-more")
 def know_more():
-    render_template("know-more.html", show_taksbar = False)
+    return render_template("know-more.html", show_taksbar = False)
 
 
 @app.route("/login" , methods = ["GET","POST"])
@@ -171,7 +171,7 @@ def signup():
 
 
 @app.route("/post", methods = ["GET", "POST"])
-# @login_required
+@login_required
 def post():
     """Let user post"""
 
@@ -201,47 +201,47 @@ def post():
 
 
 @app.route("/communities")
-# @login_required
+@login_required
 def communities():
     return render_template("communites.html", show_taskbar = True, active_page = 'communities')
 
 
 @app.route("/courses")
-# @login_required
+@login_required
 def courses():
     return render_template("courses.html", active_page = 'courses')
 
 
 @app.route("/blog")
-# @login_required
+@login_required
 def blog():
     return render_template("blog.html", show_taskbar = True, active_page = 'blog')
 
 
 @app.route("/likes")
-# @login_required
+@login_required
 def likes():
     ...
 
 
 @app.route("/bookmarks")
-# @login_required
+@login_required
 def bookmarks():
     ...
 
 
 @app.route('/users/<username>')
-# @login_required
+@login_required
 def user_profile(username):
     return f'User profile page for {username}'
 
 @app.route('/posts/<int:post_id>')
-# @login_required
+@login_required
 def post_only(post_id):
     return f'Viewing post with ID {post_id}'
 
 @app.route('/replies/<int:reply_id>')
-# @login_required
+@login_required
 def reply(reply_id):
     return f'Viewing reply with ID {reply_id}'
 
