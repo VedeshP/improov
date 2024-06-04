@@ -78,7 +78,7 @@ def login():
             text(
                 "SELECT * FROM users WHERE username = :username"
             ), {"username" : username}
-        ).fetchall
+        ).fetchall()
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(
@@ -192,8 +192,24 @@ def post():
         post_content = request.form.get("post_content")
         link = request.form.get("link")
 
+        created_at = datetime.datetime.now()
         #TODO: INSERT INTO the table with the date and time of posting the thing use datetime
         
+        if not primary_topic:
+            return apology("Please provide primary/main topic", 403)
+        if not internal_topic:
+            return apology("Please provide internal/sub topic or set it to None", 403)
+        if not post_content:
+            return apology("Must write something in the post", 403)
+        if not link:
+            link = None
+
+        db.session.execute(
+            text(
+                "INSERT INTO posts (user_id, content, main_topic, sub_topic, link, created_at) VALUES( :user_id, :content, :main_topic, :sub_topic, :link, :created_at)"
+            ), {"user_id" : user_id, "content": post_content, "main_topic": primary_topic, "sub_topic": internal_topic, "link": link, "created_at": created_at}
+        )
+        db.session.commit()
         return redirect("/")
     
     else:

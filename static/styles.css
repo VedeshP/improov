@@ -53,8 +53,6 @@ body {
     color: var(--page-bg-opp);
 }
 
-
-
 .custom-button {
     border-radius: var(--default-border-radius);
     border-width: 0px;
@@ -446,4 +444,46 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .accordion:active {
     filter: var(--invert-filter);
     box-shadow: 0 0 0 0.2rem var(--hover-color);   
+}
+
+/* for know more from here */
+
+h1 {
+    color: var(--primary-color);
+}
+
+h3 {
+    color: var(--hover-color) !important;
+    padding: 12px;
+}
+
+h5 {
+    margin-bottom: 40px;
+}
+
+.improov-title {
+    padding: 20px;
+    margin: 20px;
+    border-bottom: solid 1px;
+    border-color: var(--hover-color);
+}
+
+.section {
+    padding: 16px;
+    margin: 12px;
+    border-bottom: solid 1px;
+    border-color: var(--hover-color);
+}
+
+.imp-text {
+    color: var(--hover-color);
+}
+
+.improov-text {
+    color: var(--primary-color);
+}
+
+.responsive-img {
+    width: 100%;
+    height: auto;
 }
