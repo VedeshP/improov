@@ -492,3 +492,14 @@ h5 {
 .improov-icon {
     border-radius: var(--default-border-radius);
 }
+
+.action-btn {
+    background-color: var(--page-bg);
+    border: 0px;
+}
+
+.post-info {
+    color: var(--muted-text-new);
+    justify-content: left;
+    align-items: baseline;
+}

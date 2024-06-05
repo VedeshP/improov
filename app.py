@@ -254,17 +254,65 @@ def blog():
     return render_template("blog.html", show_taskbar = True, active_page = 'blog')
 
 
-@app.route("/likes")
+@app.route("/likes", methods = ["GET", "POST"])
 @login_required
 def likes():
-    ...
+    if request.method == "GET":
+        return render_template("index.html", active_page='likes')
+    else:
+        data = request.get_json()
+        post_id = data['post_id']
+        user_id = session["user_id"]
+
+        try:
+            db.session.execute(
+                text(
+                    "INSERT INTO likes (user_id, post_id) VALUES( :user_id, :post_id)"
+                ), {"user_id": user_id, "post_id": post_id}
+            )
+
+            db.session.execute(
+                text(
+                    "UPDATE posts SET likes = likes + 1 WHERE id = :post_id"
+                ), {"post_id": post_id}
+            )
+
+            db.session.commit()
+
+        except Exception as e:
+            db.session.rollback()
+            return apology("An unexpected error occurred: " + str(e))
+
+        return jsonify({'success': True})
 
 
-@app.route("/bookmarks")
+@app.route("/bookmarks", methods = ["GET", "POST"])
 @login_required
 def bookmarks():
-    ...
+    if request.method == "GET":
+        return render_template("index.html", active_page = 'bookmarks')
+    else: # Meaning POST method
+        # learn about ajax here 
+        data = request.get_json()
+        post_id = data['post_id']
+        user_id = session["user_id"]
 
+        try:
+            db.session.execute(
+                text(
+                    "INSERT INTO bookmarks (user_id, post_id) VALUES( :user_id, :post_id)"
+                ), {"user_id": user_id, "post_id": post_id}
+            )
+
+            db.session.commit()
+
+        except Exception as e:
+            db.session.rollback()
+            return apology("An unexpected error occurred: " + str(e))
+        
+        return jsonify({'success': True})
+
+        
 
 @app.route('/users/<username>')
 @login_required
