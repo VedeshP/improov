@@ -1,7 +1,9 @@
 from flask import redirect, render_template, request, session
 from functools import wraps
 import re
+from pyembed.core import PyEmbed
 
+pyembed_instance = PyEmbed()
 
 def login_required(f):
     """
@@ -52,6 +54,44 @@ def check_password_strength_basic(password):
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         return True
     return False
+
+
+# Function to extract URLs from the text
+def extract_urls(text):
+    import re
+    url_pattern = re.compile(r'https?://\S+')
+    return url_pattern.findall(text)
+
+
+# Function to generate rich previews using PyEmbed
+def generate_preview(url):
+    try:
+        embed_html = pyembed_instance.embed(url)
+        if embed_html:
+            return {
+                'url': url,
+                'html': embed_html,
+                'is_embed': True
+            }
+    except Exception as e:
+        print(f"Error embedding {url}: {e}")
+    return {
+        'url': url,
+        'html': f'<a href="{url}" target="_blank">{url}</a>',
+        'is_embed': False
+    }
+
+
+def embed_link(link_text):
+    urls = extract_urls(link_text)
+    preview = generate_preview(urls[0]) if urls else None
+    post = {
+        'content': link_text,
+        'preview': preview
+    }
+    return post
+
+
 
 # old code
 # def check_password_strength_basic(password):

@@ -270,6 +270,7 @@ body {
     max-width: 600px;
     max-height: 800px;
     overflow-y: auto;
+    margin-top: 12px;
 }
 
 .post-actions {
@@ -486,4 +487,8 @@ h5 {
 .responsive-img {
     width: 100%;
     height: auto;
+}
+
+.improov-icon {
+    border-radius: var(--default-border-radius);
 }

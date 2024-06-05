@@ -5,15 +5,14 @@ from sqlalchemy import text
 from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from pyembed.core import PyEmbed
 from sqlalchemy.exc import IntegrityError
 
 import datetime
 
-from helpers import login_required, apology, check_password_strength_basic
+from helpers import login_required, apology, check_password_strength_basic, extract_urls, generate_preview, embed_link
 
 app = Flask(__name__)
-pyembed_instance = PyEmbed()
+
 
 # Global variable to hold the text
 #text = "Check out this cool video: https://www.youtube.com/watch?v=K8ZgwZf1E3E and https://youtube.com/shorts/orohA_db2OI?si=5z7gPgXEHcgmns98"
@@ -44,10 +43,32 @@ def after_request(response):
 @app.route("/", methods=["GET","POST"])
 @login_required
 def index():
-    if request.method == "POST":
-        ...
-    else:
-        return render_template("index.html", login=True, show_taskbar = True, active_page = 'home')
+    """Show home page with posts to the user"""
+    if request.method == "GET":
+        user_id = session["user_id"]
+
+        rows = db.session.execute(
+            text(
+                """
+                SELECT posts.*, users.username, users.display_name 
+                FROM posts 
+                JOIN users ON posts.user_id = users.id
+                ORDER BY id DESC
+                """
+            )
+        ).fetchall()
+
+        # Convert each tuple to a list, modify it, and store in 'modified_rows'
+        modified_rows = []
+        for row in rows:
+            row_list = list(row)
+            if row_list[5]:
+                row_list.append(embed_link(row_list[5]))
+            else:
+                row_list.append(None)
+            modified_rows.append(tuple(row_list))
+        #return jsonify(modified_rows)
+        return render_template("index.html", login=True, show_taskbar = True, active_page = 'home', rows=modified_rows)
 
 
 @app.route("/know-more")
@@ -193,7 +214,6 @@ def post():
         link = request.form.get("link")
 
         created_at = datetime.datetime.now()
-        #TODO: INSERT INTO the table with the date and time of posting the thing use datetime
         
         if not primary_topic:
             return apology("Please provide primary/main topic", 403)
@@ -262,29 +282,9 @@ def reply(reply_id):
     return f'Viewing reply with ID {reply_id}'
 
 
-# # Function to extract URLs from the text
-# def extract_urls(text):
-#     import re
-#     url_pattern = re.compile(r'https?://\S+')
-#     return url_pattern.findall(text)
 
-# # Function to generate rich previews using PyEmbed
-# def generate_preview(url):
-#     try:
-#         embed_html = pyembed_instance.embed(url)
-#         if embed_html:
-#             return {
-#                 'url': url,
-#                 'html': embed_html,
-#                 'is_embed': True
-#             }
-#     except Exception as e:
-#         print(f"Error embedding {url}: {e}")
-#     return {
-#         'url': url,
-#         'html': f'<a href="{url}" target="_blank">{url}</a>',
-#         'is_embed': False
-#     }
+
+
 
 # @app.route("/testing")
 # def testing():
