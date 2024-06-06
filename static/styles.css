@@ -503,3 +503,11 @@ h5 {
     justify-content: left;
     align-items: baseline;
 }
+
+.follow-btn {
+    color: var(--hover-color);
+}
+
+.unfollow-btn {
+    color: var(--hover-color);
+}

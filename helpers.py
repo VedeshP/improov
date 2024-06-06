@@ -1,6 +1,8 @@
 from flask import redirect, render_template, request, session
 from functools import wraps
 import re
+import asyncio
+import aiohttp
 from pyembed.core import PyEmbed
 
 pyembed_instance = PyEmbed()
@@ -63,9 +65,9 @@ def extract_urls(text):
     return url_pattern.findall(text)
 
 
-# Function to generate rich previews using PyEmbed
-def generate_preview(url):
+async def fetch_embed(session, url):
     try:
+        # Using PyEmbed to fetch embed HTML asynchronously
         embed_html = pyembed_instance.embed(url)
         if embed_html:
             return {
@@ -82,14 +84,57 @@ def generate_preview(url):
     }
 
 
+async def generate_previews(urls):
+    async with aiohttp.ClientSession() as session:
+        tasks = [fetch_embed(session, url) for url in urls]
+        return await asyncio.gather(*tasks)
+
+
 def embed_link(link_text):
     urls = extract_urls(link_text)
-    preview = generate_preview(urls[0]) if urls else None
+    if urls:
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        previews = loop.run_until_complete(generate_previews(urls))
+        preview = previews[0] if previews else None
+    else:
+        preview = None
     post = {
         'content': link_text,
         'preview': preview
     }
     return post
+
+# # Function to generate rich previews using PyEmbed
+# def generate_preview(url):
+#     try:
+#         embed_html = pyembed_instance.embed(url)
+#         if embed_html:
+#             return {
+#                 'url': url,
+#                 'html': embed_html,
+#                 'is_embed': True
+#             }
+#     except Exception as e:
+#         print(f"Error embedding {url}: {e}")
+#     return {
+#         'url': url,
+#         'html': f'<a href="{url}" target="_blank">{url}</a>',
+#         'is_embed': False
+#     }
+
+
+# def embed_link(link_text):
+#     urls = extract_urls(link_text)
+#     preview = generate_preview(urls[0]) if urls else None
+#     post = {
+#         'content': link_text,
+#         'preview': preview
+#     }
+#     return post
 
 
 

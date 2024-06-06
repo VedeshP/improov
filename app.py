@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 import datetime
 
-from helpers import login_required, apology, check_password_strength_basic, extract_urls, generate_preview, embed_link
+from helpers import login_required, apology, check_password_strength_basic, embed_link
 
 app = Flask(__name__)
 
@@ -47,15 +47,34 @@ def index():
     if request.method == "GET":
         user_id = session["user_id"]
 
+        # rows = db.session.execute(
+        #     text(
+        #         """
+        #         SELECT posts.*, users.username, users.display_name 
+        #         FROM posts 
+        #         JOIN users ON posts.user_id = users.id
+        #         ORDER BY id DESC
+        #         """
+        #     )
+        # ).fetchall()
+
         rows = db.session.execute(
             text(
                 """
-                SELECT posts.*, users.username, users.display_name 
-                FROM posts 
+                SELECT posts.*, 
+                    users.username, 
+                    users.display_name,
+                    CASE WHEN likes.user_id IS NOT NULL THEN 1 ELSE 0 END AS liked,
+                    CASE WHEN bookmarks.user_id IS NOT NULL THEN 1 ELSE 0 END AS bookmarked,
+                    CASE WHEN follows.user_id IS NOT NULL THEN 1 ELSE 0 END AS followed
+                FROM posts
                 JOIN users ON posts.user_id = users.id
-                ORDER BY id DESC
+                LEFT JOIN likes ON posts.id = likes.post_id AND likes.user_id = :current_user_id
+                LEFT JOIN bookmarks ON posts.id = bookmarks.post_id AND bookmarks.user_id = :current_user_id
+                LEFT JOIN follows ON users.id = follows.following_user_id AND follows.user_id = :current_user_id
+                ORDER BY posts.id DESC;
                 """
-            )
+            ), {"current_user_id": user_id}
         ).fetchall()
 
         # Convert each tuple to a list, modify it, and store in 'modified_rows'
@@ -286,6 +305,29 @@ def likes():
         return jsonify({'success': True})
 
 
+@app.route("/unlike", methods = ["POST"])
+def unlike():
+    if request.method == "POST":
+        data = request.get_json()
+        post_id = data["post_id"]
+        user_id = session["user_id"]
+
+        try:
+            db.session.execute(
+                text(
+                    "DELETE FROM likes WHERE user_id = :user_id AND post_id = :post_id"
+                ), {"user_id": user_id, "post_id": post_id}
+            )
+
+            db.session.commit()
+        
+        except Exception as e:
+            db.session.rollback()
+            return apology("An unexpected error occurred: " + str(e))
+        
+        return jsonify({'success': True})
+
+
 @app.route("/bookmarks", methods = ["GET", "POST"])
 @login_required
 def bookmarks():
@@ -312,7 +354,73 @@ def bookmarks():
         
         return jsonify({'success': True})
 
+
+@app.route("/unbookmark", methods = ["POST"])
+def unbookmark():
+    if request.method == "POST":
+        data = request.get_json()
+        post_id = data["post_id"]
+        user_id = session["user_id"]
+
+        try:
+            db.session.execute(
+                text(
+                    "DELETE FROM bookmarks WHERE user_id = :user_id AND post_id = :post_id"
+                ), {"user_id": user_id, "post_id": post_id}
+            )
+
+            db.session.commit()
         
+        except Exception as e:
+            db.session.rollback()
+            return apology("An unexpected error occurred: " + str(e))
+        
+        return jsonify({'success': True})
+
+
+@app.route("/follow", methods = ["POST"])
+def follow():
+    data = request.get_json()
+    to_follow_user_id = data["user_id"]
+    user_id = session["user_id"]
+
+    try:
+        db.session.execute(
+            text(
+                "INSERT INTO follows (user_id, following_user_id) VALUES( :user_id, :following_user_id)"
+            ), {"user_id": user_id, "following_user_id": to_follow_user_id}
+        )
+
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        return apology("An unexpected error occurred: " + str(e))
+    
+    return jsonify({'success': True})
+
+
+@app.route("/unfollow", methods = ["POST"])
+def unfollow():
+    data = request.get_json()
+    to_unfollow_user_id = data["user_id"]
+    user_id = session["user_id"]
+
+    try:
+        db.session.execute(
+            text(
+                "DELETE FROM follows WHERE user_id = :user_id AND following_user_id = :to_unfollow_user_id"
+            ), {"user_id": user_id, "to_unfollow_user_id": to_unfollow_user_id}
+        )
+
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        return apology("An unexpected error occurred: " + str(e))
+    
+    return jsonify({'success': True})
+
 
 @app.route('/users/<username>')
 @login_required
