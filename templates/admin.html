@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Admin
+{% endblock %}
+
+{% block main %}
+<form action="/admin" method="post">
+    <div class="input-group mb-3">
+        <span class="input-group-text">*</span>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="floatingInputGroup1" placeholder="Password" name="password">
+          <label for="floatingInputGroup1">Password</label>
+    </div>
+    <div style="padding: 20px;">
+        <button type="submit" class="btn btn-primary">Get backup</button>
+    </div>
+</form>
+{% endblock %}

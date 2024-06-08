@@ -511,3 +511,116 @@ h5 {
 .unfollow-btn {
     color: var(--hover-color);
 }
+
+/* for user info from here  */
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.user-info h4 {
+    margin: 0;
+}
+
+.user-info h6 {
+    margin: 5px 0 0 0;
+}
+
+/* Ensure action buttons are centered and responsive */
+.actions {
+    width: 100%;
+    text-align: center;
+}
+
+.action-components {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.act-components {
+    margin: 10px 0;
+}
+
+.act-components .btn-group {
+    width: 100%;
+}
+
+.act-components .dropdown-menu {
+    width: 100%;
+    color: var(--page-bg-opp);
+}
+
+.show {
+    background-color: var(--page-bg);
+    color: var(--page-bg-opp);
+}
+
+.dropdown-item:hover {
+    background-color: var(--hover-color);
+}
+
+.custom-btn {
+    background-color: var(--hover-color) !important; 
+    color: #FFFFFF;
+    width: 100%;
+}
+
+/* Media queries for larger screens */
+@media (min-width: 768px) {
+    .user-info {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+
+    .actions {
+        text-align: left;
+    }
+
+    .action-components {
+        flex-direction: row;
+        justify-content: space-around;
+        margin: 0 auto;
+        max-width: 600px;
+    }
+
+    .act-components {
+        margin: 0 10px;
+    }
+}
+
+.btn-secondary {
+    background-color: var(--page-bg);
+    color: var(--page-bg-opp);
+    border-color: var(--page-bg);
+}
+
+.custom-color-links {
+    color: var(--hover-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--page-bg);
+    color: var(--hover-color);
+    border-color: var(--page-bg);
+}
+
+/* for replies from here  */
+
+.reply-content {
+    border-bottom: solid 4px;
+    border-color: var(--primary-color);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.big-icon {
+    fill: var(--hover-color);
+}

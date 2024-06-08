@@ -2,24 +2,19 @@ import os
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
-from flask import Flask, flash, redirect, render_template, request, session, jsonify
+from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.exc import IntegrityError
 
 import datetime
 
-from helpers import login_required, apology, check_password_strength_basic, embed_link
+from helpers import login_required, apology, check_password_strength_basic, embed_link, export_db
 
 app = Flask(__name__)
 
-
-# Global variable to hold the text
-#text = "Check out this cool video: https://www.youtube.com/watch?v=K8ZgwZf1E3E and https://youtube.com/shorts/orohA_db2OI?si=5z7gPgXEHcgmns98"
-#text = "this is the link for bootstrap https://getbootstrap.com/docs/5.3/forms/input-group/"
-
-# Set a secret key for the application
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+# Get the secret key from an environment variable
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # Get the current working directory
 cwd = os.environ.get('CWD', os.getcwd())
@@ -27,8 +22,6 @@ cwd = os.environ.get('CWD', os.getcwd())
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///improov.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
-# app.run(host='0.0.0.0') 
 
 
 @app.after_request
@@ -258,19 +251,19 @@ def post():
 @app.route("/communities")
 @login_required
 def communities():
-    return render_template("communites.html", show_taskbar = True, active_page = 'communities')
+    return render_template("coming-soon.html", show_taskbar = True, active_page = 'communities')
 
 
 @app.route("/courses")
 @login_required
 def courses():
-    return render_template("courses.html", active_page = 'courses')
+    return render_template("coming-soon.html", active_page = 'courses', show_taskbar = True)
 
 
 @app.route("/blog")
 @login_required
 def blog():
-    return render_template("blog.html", show_taskbar = True, active_page = 'blog')
+    return render_template("coming-soon.html", show_taskbar = True, active_page = 'blog')
 
 
 @app.route("/likes", methods = ["GET", "POST"])
@@ -317,6 +310,12 @@ def unlike():
                 text(
                     "DELETE FROM likes WHERE user_id = :user_id AND post_id = :post_id"
                 ), {"user_id": user_id, "post_id": post_id}
+            )
+
+            db.session.execute(
+                text(
+                    "UPDATE posts SET likes = likes - 1 WHERE id = :post_id"
+                ), {"post_id": post_id}
             )
 
             db.session.commit()
@@ -417,27 +416,166 @@ def unfollow():
 
     except Exception as e:
         db.session.rollback()
-        return apology("An unexpected error occurred: " + str(e))
+        return apology("An unexpected error occurred: " + str(e), 403)
     
     return jsonify({'success': True})
 
 
-@app.route('/users/<username>')
+@app.route('/users/<username>/<int:display_user_id>', methods = ["GET", "POST"])
 @login_required
-def user_profile(username):
-    return f'User profile page for {username}'
+def user_profile(username, display_user_id):
+    user_id = session["user_id"]
+    if request.method == "GET":
+
+        following_check = db.session.execute(
+            text(
+                """
+                SELECT * FROM follows WHERE 
+                user_id = :user_id
+                AND
+                following_user_id = :display_user_id
+                """
+            ), {"user_id": user_id, "display_user_id": display_user_id}
+        ).fetchall()
+
+        follower_check = db.session.execute(
+            text(
+                """
+                SELECT * FROM follows WHERE
+                user_id = :display_user_id
+                AND
+                following_user_id = :user_id
+                """
+            ), {"user_id": user_id, "display_user_id": display_user_id}
+        ).fetchall()
+
+        display_name = db.session.execute(
+            text(
+                """
+                SELECT display_name 
+                FROM users 
+                WHERE id = :display_user_id
+                """
+            ), {"display_user_id": display_user_id}
+        ).fetchall()
+        
+        no_of_following = db.session.execute(
+            text(
+                """
+                SELECT COUNT(*) AS following_count
+                FROM follows
+                WHERE user_id = :display_user_id
+                """
+            ), {"display_user_id": display_user_id}
+        ).fetchall()
+
+        no_of_followers = db.session.execute(
+            text(
+                """
+                SELECT COUNT(*) AS follower_count
+                FROM follows
+                WHERE following_user_id = :display_user_id
+                """
+            ), {"display_user_id": display_user_id}
+        ).fetchall()
+        
+        followings = db.session.execute(
+            text(
+                """
+                SELECT follows.*,
+                users.username
+                FROM follows
+                JOIN users ON follows.following_user_id = users.id
+                WHERE follows.user_id = :display_user_id
+                """
+            ), {"display_user_id": display_user_id}
+        ).fetchall()
+
+        followers = db.session.execute(
+            text(
+                """
+                SELECT follows.*,
+                users.username
+                FROM follows
+                JOIN users ON follows.user_id = users.id
+                WHERE follows.following_user_id = :display_user_id
+                """
+            ), {"display_user_id": display_user_id}
+        ).fetchall()
+
+        return render_template(
+            "user-info.html",
+            no_of_following=no_of_following, 
+            no_of_followers=no_of_followers, 
+            followers=followers, 
+            followings=followings, 
+            username=username, 
+            display_name=display_name, 
+            follower_check=follower_check, 
+            following_check=following_check,
+            display_user_id=display_user_id
+            )
+
 
 @app.route('/posts/<int:post_id>')
 @login_required
 def post_only(post_id):
     return f'Viewing post with ID {post_id}'
 
-@app.route('/replies/<int:reply_id>')
+@app.route('/replies/<int:post_id>/<username>', methods = ["GET", "POST"])
 @login_required
-def reply(reply_id):
-    return f'Viewing reply with ID {reply_id}'
+def reply(post_id, username):
+    user_id = session["user_id"]
+    if request.method == "POST":
+        reply_content = request.form.get("reply_content")
+        if not reply_content:
+            return apology("Must provide a reply", 403)
+        created_on = datetime.datetime.now()
+        try:
+            db.session.execute(
+                text(
+                    "INSERT INTO replies (post_id, user_id, reply, created_on) VALUES( :post_id, :user_id, :reply, :created_on)"
+                ), {"post_id": post_id, "user_id": user_id, "reply": reply_content, "created_on": created_on}
+            )
 
+            db.session.commit()
 
+        except Exception as e:
+            db.session.rollback()
+            return apology("An unexpected error occurred: " + str(e), 403)
+        
+        return redirect(url_for('reply', post_id=post_id, username=username))
+
+    else:
+        replies = db.session.execute(
+            text(
+                """
+                SELECT replies.*,
+                users.username,
+                users.display_name
+                FROM replies
+                JOIN users ON replies.user_id = users.id
+                WHERE replies.post_id = :post_id
+                ORDER BY id DESC
+                """
+            ), {"post_id": post_id}
+        ).fetchall()
+
+        return render_template("reply.html", replies=replies, username=username, post_id=post_id)
+    
+
+@app.route("/admin", methods = ["GET", "POST"])
+def admin():
+    if request.method == "GET":
+        return render_template("admin.html")
+    else:
+        ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+        password = request.form.get("password")
+        if not password:
+            return apology("must provide password", 403)
+        if password != ADMIN_PASSWORD:
+            return apology("Invalid password", 403)
+        return export_db()
 
 
 

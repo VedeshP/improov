@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, send_file
 from functools import wraps
 import re
 import asyncio
@@ -107,6 +107,11 @@ def embed_link(link_text):
         'preview': preview
     }
     return post
+
+
+def export_db():
+    file_path = 'instance/improov.db'
+    return send_file(file_path, as_attachment=True, download_name='improov_backup.db')
 
 # # Function to generate rich previews using PyEmbed
 # def generate_preview(url):
