@@ -26,8 +26,9 @@
                     <select class="form-select form-select-sm" aria-label="Small select example" name="internal_topic">
                         <option disabled selected>Internal Topic</option>
                         <option>None</option>
-                        <option>Two</option>
-                        <option>Three</option>
+                        {% for topic in topics %}
+                        <option value="{{ topic[1] }}">{{ topic[1] }} ({{ topic[2] }}) </option>
+                        {% endfor %}
                     </select>
                 </div>
                 <label for="exampleFormControlTextarea1" class="form-label">Post content</label>

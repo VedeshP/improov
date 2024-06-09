@@ -245,7 +245,12 @@ def post():
         return redirect("/")
     
     else:
-        return render_template("post.html", active_page = 'post', show_taskbar= True, username=username, display_name=display_name)
+        topics = db.session.execute(
+            text(
+                "SELECT * FROM topics"
+            )
+        )
+        return render_template("post.html", active_page = 'post', show_taskbar= True, username=username, display_name=display_name, topics=topics)
 
 
 @app.route("/communities")
@@ -270,7 +275,36 @@ def blog():
 @login_required
 def likes():
     if request.method == "GET":
-        return render_template("index.html", active_page='likes')
+        user_id = session["user_id"]
+        rows = db.session.execute(
+            text(
+                """
+                SELECT posts.*, 
+                    users.username, 
+                    users.display_name,
+                    CASE WHEN bookmarks.user_id IS NOT NULL THEN 1 ELSE 0 END AS bookmarked,
+                    CASE WHEN follows.user_id IS NOT NULL THEN 1 ELSE 0 END AS followed
+                FROM posts
+                JOIN users ON posts.user_id = users.id
+                JOIN likes ON posts.id = likes.post_id AND likes.user_id = :current_user_id
+                LEFT JOIN bookmarks ON posts.id = bookmarks.post_id AND bookmarks.user_id = :current_user_id
+                LEFT JOIN follows ON users.id = follows.following_user_id AND follows.user_id = :current_user_id
+                ORDER BY posts.id DESC;
+                """
+            ), {"current_user_id": user_id}
+        ).fetchall()
+
+                # Convert each tuple to a list, modify it, and store in 'modified_rows'
+        modified_rows = []
+        for row in rows:
+            row_list = list(row)
+            if row_list[5]:
+                row_list.append(embed_link(row_list[5]))
+            else:
+                row_list.append(None)
+            modified_rows.append(tuple(row_list))
+
+        return render_template("likes.html", active_page='likes', rows=modified_rows)
     else:
         data = request.get_json()
         post_id = data['post_id']
@@ -331,7 +365,36 @@ def unlike():
 @login_required
 def bookmarks():
     if request.method == "GET":
-        return render_template("index.html", active_page = 'bookmarks')
+        user_id = session["user_id"]
+        rows = db.session.execute(
+            text(
+                """
+                SELECT posts.*, 
+                    users.username, 
+                    users.display_name,
+                    CASE WHEN likes.user_id IS NOT NULL THEN 1 ELSE 0 END AS liked,
+                    CASE WHEN follows.user_id IS NOT NULL THEN 1 ELSE 0 END AS followed
+                FROM posts
+                JOIN users ON posts.user_id = users.id
+                JOIN bookmarks ON posts.id = bookmarks.post_id AND bookmarks.user_id = :current_user_id
+                LEFT JOIN likes ON posts.id = likes.post_id AND likes.user_id = :current_user_id
+                LEFT JOIN follows ON users.id = follows.following_user_id AND follows.user_id = :current_user_id
+                ORDER BY posts.id DESC;
+                """
+            ), {"current_user_id": user_id}
+        ).fetchall()
+
+                # Convert each tuple to a list, modify it, and store in 'modified_rows'
+        modified_rows = []
+        for row in rows:
+            row_list = list(row)
+            if row_list[5]:
+                row_list.append(embed_link(row_list[5]))
+            else:
+                row_list.append(None)
+            modified_rows.append(tuple(row_list))
+        #return jsonify(modified_rows)
+        return render_template("bookmarks.html", active_page = 'bookmarks', rows=modified_rows)
     else: # Meaning POST method
         # learn about ajax here 
         data = request.get_json()
@@ -578,7 +641,29 @@ def admin():
         return export_db()
 
 
+@app.route("/add-topic", methods=["GET", "POST"])
+def add_topic():
+    if request.method == "POST":
+        main_topic = request.form.get("primary_topic")
+        sub_topic = request.form.get("sub_topic")
+        try:
 
+            db.session.execute(
+                text(
+                    "INSERT INTO topics(sub_topic, main_topic) VALUES( :sub_topic, :main_topic)"
+                ), {"sub_topic": sub_topic, "main_topic":main_topic}
+            )
+
+            db.session.commit()
+
+        except Exception as e:
+            db.session.rollback()
+            return apology("An unexpected error occurred: " + str(e), 403)
+        
+        flash("Topic added")
+        return redirect("/")
+    else:
+        return render_template("add-topic.html")
 
 # @app.route("/testing")
 # def testing():

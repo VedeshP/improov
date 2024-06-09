@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add a topic
+{% endblock %}
+
+{% block main %}
+<form action="/add-topic" method="post">
+    <div class="form-custom">
+        <div id="select-menu">
+            <select class="form-select form-select-lg mb-3" aria-label="Large select example" name="primary_topic">
+                <option disabled selected>Primary Topic</option>
+                <option>Mind</option>
+                <option>Body</option>
+                <option>Soul</option>
+            </select>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Sub Topic</span>
+            <div class="form-floating">
+            <input type="text" class="form-control" id="floatingInputGroup1" placeholder="Sub Topic" name="sub_topic">
+            <label for="floatingInputGroup1">Sub Topic</label>
+            </div>
+        </div>
+        <div style="padding: 20px">
+            <button class="btn btn-outline-success" type="submit">Add topic</button>
+        </div>
+</form>
+{% endblock %}

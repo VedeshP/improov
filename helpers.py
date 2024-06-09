@@ -4,6 +4,7 @@ import re
 import asyncio
 import aiohttp
 from pyembed.core import PyEmbed
+from pyembed.core.consumer import PyEmbedConsumerError
 
 pyembed_instance = PyEmbed()
 
@@ -75,6 +76,8 @@ async def fetch_embed(session, url):
                 'html': embed_html,
                 'is_embed': True
             }
+    except PyEmbedConsumerError as e:
+        print(f"Error embedding {url}: {e}")
     except Exception as e:
         print(f"Error embedding {url}: {e}")
     return {
