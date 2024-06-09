@@ -665,6 +665,13 @@ def add_topic():
     else:
         return render_template("add-topic.html")
 
+
+@app.route("/about-us")
+def about_us():
+    return render_template("about-us.html")
+
+
+
 # @app.route("/testing")
 # def testing():
 #     urls = extract_urls(text)

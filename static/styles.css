@@ -624,3 +624,11 @@ h5 {
 .big-icon {
     fill: var(--hover-color);
 }
+
+.left-align {
+    text-align: left;
+    border: solid 4px;
+    border-radius: 12px;
+    border-color: var(--primary-color);
+    padding: 20px;
+}
