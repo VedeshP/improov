@@ -11,6 +11,14 @@ import datetime
 
 from helpers import login_required, apology, check_password_strength_basic, embed_link, export_db
 
+# #temporary code to check logs (testing)
+# import logging
+
+# # Configure logging
+# logging.basicConfig(level=logging.DEBUG, filename='debug.log', filemode='w', 
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
+# logger = logging.getLogger()
+
 app = Flask(__name__)
 
 # Get the secret key from an environment variable
@@ -71,14 +79,15 @@ def index():
         ).fetchall()
 
         # Convert each tuple to a list, modify it, and store in 'modified_rows'
-        modified_rows = []
-        for row in rows:
-            row_list = list(row)
-            if row_list[5]:
-                row_list.append(embed_link(row_list[5]))
-            else:
-                row_list.append(None)
-            modified_rows.append(tuple(row_list))
+        # modified_rows = []
+        # for row in rows:
+        #     row_list = list(row)
+        #     if row_list[5]:
+        #         row_list.append(embed_link(row_list[5]))
+        #     else:
+        #         row_list.append(None)
+        #     modified_rows.append(tuple(row_list))
+        modified_rows = [dict(row._mapping) for row in rows]        
         #return jsonify(modified_rows)
         return render_template("index.html", login=True, show_taskbar = True, active_page = 'home', rows=modified_rows)
 
@@ -236,12 +245,23 @@ def post():
         if not link:
             link = None
 
-        db.session.execute(
-            text(
-                "INSERT INTO posts (user_id, content, main_topic, sub_topic, link, created_at) VALUES( :user_id, :content, :main_topic, :sub_topic, :link, :created_at)"
-            ), {"user_id" : user_id, "content": post_content, "main_topic": primary_topic, "sub_topic": internal_topic, "link": link, "created_at": created_at}
-        )
-        db.session.commit()
+        # Fetch iframe if link is provided
+        iframe = None
+        if link:
+            preview = embed_link(link)
+            if preview and 'preview' in preview and 'html' in preview['preview']:
+                iframe = preview['preview']['html']
+
+        try:
+            db.session.execute(
+                text(
+                    "INSERT INTO posts (user_id, content, main_topic, sub_topic, link, created_at, iframe) VALUES( :user_id, :content, :main_topic, :sub_topic, :link, :created_at, :iframe)"
+                ), {"user_id" : user_id, "content": post_content, "main_topic": primary_topic, "sub_topic": internal_topic, "link": link, "created_at": created_at, "iframe": iframe}
+            )
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return apology("An unexpected error occurred: " + str(e))
         return redirect("/")
     
     else:
@@ -295,15 +315,17 @@ def likes():
         ).fetchall()
 
                 # Convert each tuple to a list, modify it, and store in 'modified_rows'
-        modified_rows = []
-        for row in rows:
-            row_list = list(row)
-            if row_list[5]:
-                row_list.append(embed_link(row_list[5]))
-            else:
-                row_list.append(None)
-            modified_rows.append(tuple(row_list))
-
+        # modified_rows = []
+        # for row in rows:
+        #     row_list = list(row)
+        #     if row_list[5]:
+        #         row_list.append(embed_link(row_list[5]))
+        #     else:
+        #         row_list.append(None)
+        #     modified_rows.append(tuple(row_list))
+         # New modified rows
+        modified_rows = [dict(row._mapping) for row in rows]
+        #return jsonify(modified_rows)
         return render_template("likes.html", active_page='likes', rows=modified_rows)
     else:
         data = request.get_json()
@@ -384,15 +406,17 @@ def bookmarks():
             ), {"current_user_id": user_id}
         ).fetchall()
 
-                # Convert each tuple to a list, modify it, and store in 'modified_rows'
-        modified_rows = []
-        for row in rows:
-            row_list = list(row)
-            if row_list[5]:
-                row_list.append(embed_link(row_list[5]))
-            else:
-                row_list.append(None)
-            modified_rows.append(tuple(row_list))
+        # Convert each tuple to a list, modify it, and store in 'modified_rows'
+        # modified_rows = []
+        # for row in rows:
+        #     row_list = list(row)
+        #     if row_list[5]:
+        #         row_list.append(embed_link(row_list[5]))
+        #     else:
+        #         row_list.append(None)
+        #     modified_rows.append(tuple(row_list))
+        # New modified rows
+        modified_rows = [dict(row._mapping) for row in rows]
         #return jsonify(modified_rows)
         return render_template("bookmarks.html", active_page = 'bookmarks', rows=modified_rows)
     else: # Meaning POST method
@@ -674,10 +698,38 @@ def about_us():
 
 # @app.route("/testing")
 # def testing():
-#     urls = extract_urls(text)
-#     preview = generate_preview(urls[0]) if urls else None
-#     post = {
-#         'content': text,
-#         'preview': preview
-#     }
-#     return render_template('testing.html', post=post)
+#     rows = db.session.execute(
+#         text(
+#             "SELECT * FROM posts"
+#         )
+#     ).fetchall()
+
+
+#     modified_rows = [dict(row._mapping) for row in rows]
+#     # Process each row to update iframe
+#     # Process each row to update iframe
+#     for row in modified_rows:
+#         if row['link']:
+#             preview = embed_link(row['link'])
+            
+#             # Log the preview content for debugging
+#             logger.debug(f"Post ID: {row['id']}, Link: {row['link']}, Preview: {preview}")
+
+#             # Check if the preview and nested keys exist
+#             if preview and 'preview' in preview and 'html' in preview['preview']:
+#                 row['iframe'] = preview['preview']['html']
+#                 logger.debug(f"Post ID: {row['id']}, Generated iframe: {row['iframe']}")
+#             else:
+#                 logger.debug(f"Post ID: {row['id']}, Missing preview or HTML key")
+
+#             # Update the database with the new iframe value
+#             db.session.execute(
+#                 text("UPDATE posts SET iframe = :iframe WHERE id = :id"),
+#                 {"iframe": row['iframe'], "id": row['id']}
+#             )
+
+#     # Commit the changes to the database
+#     db.session.commit()
+
+#     # Return the JSON response
+#     return jsonify(modified_rows)
