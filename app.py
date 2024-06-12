@@ -11,6 +11,10 @@ import datetime
 
 from helpers import login_required, apology, check_password_strength_basic, embed_link, export_db
 
+#from urllib.parse import urlparse, parse_qs
+
+#import sqlitecloud
+
 # #temporary code to check logs (testing)
 # import logging
 
@@ -24,12 +28,14 @@ app = Flask(__name__)
 # Get the secret key from an environment variable
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
+
 # Get the current working directory
 cwd = os.environ.get('CWD', os.getcwd())
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///improov.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
 
 
 @app.after_request
@@ -695,6 +701,25 @@ def about_us():
     return render_template("about-us.html")
 
 
+# Test endpoint to check database connection and table existence
+@app.route('/test_connection')
+def test_connection():
+    try:
+        # List all tables in the database
+        tables_result = db.session.execute(text("SELECT name FROM sqlite_master WHERE type='table';"))
+        tables = [row[0] for row in tables_result.fetchall()]
+
+        # Check if the 'users' table exists
+        if 'users' in tables:
+            # If the table exists, fetch its schema
+            schema_result = db.session.execute(text("PRAGMA table_info(users);"))
+            schema = [{'cid': row[0], 'name': row[1], 'type': row[2], 'notnull': row[3], 'dflt_value': row[4], 'pk': row[5]} for row in schema_result.fetchall()]
+            return jsonify({'message': 'Connected to database. Users table exists.', 'schema': schema})
+        else:
+            return jsonify({'message': 'Connected to database but users table does not exist.', 'tables': tables})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
 
 # @app.route("/testing")
 # def testing():
@@ -733,3 +758,4 @@ def about_us():
 
 #     # Return the JSON response
 #     return jsonify(modified_rows)
+
