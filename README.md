@@ -36,7 +36,7 @@ Watch the project video for a detailed walkthrough of Improov's features and fun
 [![Improov Project Video](https://img.youtube.com/vi/your-video-id/0.jpg)](https://www.youtube.com/watch?v=your-video-id)
 
 ## Credits
-- **Creator**: [Your Name](https://github.com/VedeshP)
+- **Creator**: [Vedesh P](https://github.com/VedeshP)
 - **Course**: CS50x by Harvard University
 - **Inspiration**: Self-improvement and meaningful social connections
 
