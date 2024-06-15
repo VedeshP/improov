@@ -56,6 +56,8 @@ def check_password_strength_basic(password):
         return True
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         return True
+    if len(password) < 8:
+        return True
     return False
 
 

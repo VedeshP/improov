@@ -111,9 +111,11 @@
             <h2>Join <span class="improov-text">Improov</span> Today – Be a Part of the <span class="imp-text">Change</span></h2>
         </div>
         {% if not session["user_id"] %}
-        <div style="padding: 20px">
-            <button class="btn btn-outline-success" type="submit">Sign Up</button>
-        </div>
+        <form action="/signup" method="get">
+            <div style="padding: 20px">
+                <button class="btn btn-outline-success" type="submit">Sign Up</button>
+            </div>
+        </form>
         {% endif %}
     </div>
 {% endblock %}
