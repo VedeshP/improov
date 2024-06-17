@@ -111,9 +111,11 @@ def login():
     session.clear()
 
     if request.method == "POST":
-        # Ensure username was submitted
+        # Get details from the form
         username = request.form.get("username")
+        username = username.strip()
         password = request.form.get("password")
+        # Ensure username was submitted
         if not username:
             return apology("Must provide username", 403)
 
@@ -146,6 +148,7 @@ def login():
 
 @app.route("/logout")
 def logout():
+    """Log User out"""
     # Forget user
     session.clear()
     return redirect("/know-more")
@@ -188,6 +191,7 @@ def signup():
         if check_password_strength_basic(password):
             return apology("Password must contain atleast 8 characters, a special character, letters and numbers", 403)
         
+        # Get password hash to store in the database
         hash = generate_password_hash(password)
 
         try:
@@ -282,24 +286,28 @@ def post():
 @app.route("/communities")
 @login_required
 def communities():
+    # TODO: Make structure of how communites and messages will work
     return render_template("coming-soon.html", show_taskbar = True, active_page = 'communities')
 
 
 @app.route("/courses")
 @login_required
 def courses():
+    # TODO: Let user create and consume courses
     return render_template("coming-soon.html", active_page = 'courses', show_taskbar = True)
 
 
 @app.route("/blog")
 @login_required
 def blog():
+    # TODO: Let user post and read blogs and microblogs
     return render_template("coming-soon.html", show_taskbar = True, active_page = 'blog')
 
 
 @app.route("/likes", methods = ["GET", "POST"])
 @login_required
 def likes():
+    """Display user's likes"""
     if request.method == "GET":
         user_id = session["user_id"]
         rows = db.session.execute(
@@ -334,6 +342,7 @@ def likes():
         #return jsonify(modified_rows)
         return render_template("likes.html", active_page='likes', rows=modified_rows)
     else:
+        """Register user's liked post (by json [JavaScript])"""
         data = request.get_json()
         post_id = data['post_id']
         user_id = session["user_id"]
@@ -392,6 +401,7 @@ def unlike():
 @app.route("/bookmarks", methods = ["GET", "POST"])
 @login_required
 def bookmarks():
+    """Display User's Bookmarks"""
     if request.method == "GET":
         user_id = session["user_id"]
         rows = db.session.execute(
@@ -517,6 +527,7 @@ def unfollow():
 @app.route('/users/<username>/<int:display_user_id>', methods = ["GET", "POST"])
 @login_required
 def user_profile(username, display_user_id):
+    """Display user info with followers and following"""
     user_id = session["user_id"]
     if request.method == "GET":
 
