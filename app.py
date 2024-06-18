@@ -712,24 +712,95 @@ def about_us():
     return render_template("about-us.html")
 
 
-# Test endpoint to check database connection and table existence
-@app.route('/test_connection')
-def test_connection():
-    try:
-        # List all tables in the database
-        tables_result = db.session.execute(text("SELECT name FROM sqlite_master WHERE type='table';"))
-        tables = [row[0] for row in tables_result.fetchall()]
+@app.route("/forgot-password", methods = ["GET", "POST"])
+def change_password():
+    if request.method == "POST":
+        username = request.form.get("username")
+        username = username.strip()
+        email = request.form.get("email")
+        date_of_birth = request.form.get("birthday")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
 
-        # Check if the 'users' table exists
-        if 'users' in tables:
-            # If the table exists, fetch its schema
-            schema_result = db.session.execute(text("PRAGMA table_info(users);"))
-            schema = [{'cid': row[0], 'name': row[1], 'type': row[2], 'notnull': row[3], 'dflt_value': row[4], 'pk': row[5]} for row in schema_result.fetchall()]
-            return jsonify({'message': 'Connected to database. Users table exists.', 'schema': schema})
-        else:
-            return jsonify({'message': 'Connected to database but users table does not exist.', 'tables': tables})
-    except Exception as e:
-        return jsonify({'error': str(e)})
+        if not username:
+            return apology("Must provide Username", 403)
+        if not date_of_birth:
+            return apology("Must provide Birthday", 403)
+        if not email:
+            return apology("Must provide Email Id", 403)
+        if not password:
+            return apology("Please set a password", 400)
+        if not confirm_password:
+            return apology("Must confirm password", 400)
+        if password != confirm_password:
+            return apology("Both password must be same", 403)
+        if check_password_strength_basic(password):
+            return apology("Password must contain atleast 8 characters, a special character, letters and numbers", 403)
+
+
+        rows = db.session.execute(
+            text(
+                """
+                SELECT * FROM users 
+                WHERE username = :username
+                """
+            ), {"username": username}
+        ).fetchall()
+        # Get a list of dictionaries (dictionary here) for easier retreiving of data
+        modified_rows = [dict(row._mapping) for row in rows]
+
+        if not modified_rows:
+            return apology("Username not found", 403)
+
+        # if check_password_hash(modified_rows["password"], password):
+        #     return apology("")
+        if modified_rows["email_id"] != email:
+            return apology("Invalid Email", 403)
+        if modified_rows["date_of_birth"] != birthday:
+            return apology("Invalid birthdate", 403)
+        hash = generate_password_hash(password)
+
+        try:
+            db.session.execute(
+                text(
+                    """
+                    UPDATE users
+                    SET password = :hash 
+                    WHERE username = :username
+                    """
+                ), {"hash": hash, "username": username}
+            )
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return apology("An unexpected error occurred: " + str(e))
+        #return jsonify(modified_rows)
+        flash("password updated!")
+        return redirect("/login")
+
+    else: 
+        return render_template("change-password.html")
+        
+
+
+# Test endpoint to check database connection and table existence
+# @app.route('/test_connection')
+# def test_connection():
+#     try:
+#         # List all tables in the database
+#         tables_result = db.session.execute(text("SELECT name FROM sqlite_master WHERE type='table';"))
+#         tables = [row[0] for row in tables_result.fetchall()]
+
+#         # Check if the 'users' table exists
+#         if 'users' in tables:
+#             # If the table exists, fetch its schema
+#             schema_result = db.session.execute(text("PRAGMA table_info(users);"))
+#             schema = [{'cid': row[0], 'name': row[1], 'type': row[2], 'notnull': row[3], 'dflt_value': row[4], 'pk': row[5]} for row in schema_result.fetchall()]
+#             return jsonify({'message': 'Connected to database. Users table exists.', 'schema': schema})
+#         else:
+#             return jsonify({'message': 'Connected to database but users table does not exist.', 'tables': tables})
+#     except Exception as e:
+#         return jsonify({'error': str(e)})
 
 
 # @app.route("/testing")
