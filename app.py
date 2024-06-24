@@ -163,7 +163,7 @@ def signup():
     if request.method == "POST":
         
         username = request.form.get("username")
-        username = username.strip().lower()
+        username = username.strip()
         display_name = request.form.get("display_name")
         email = request.form.get("email")
         password = request.form.get("password")
