@@ -166,6 +166,7 @@ def signup():
         username = username.strip()
         display_name = request.form.get("display_name")
         email = request.form.get("email")
+        email = email.strip()
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
         birthday = request.form.get("birthday")
