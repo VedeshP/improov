@@ -757,7 +757,7 @@ def change_password():
         #     return apology("")
         if modified_rows["email_id"] != email:
             return apology("Invalid Email", 403)
-        if modified_rows["date_of_birth"] != birthday:
+        if modified_rows["date_of_birth"] != date_of_birth:
             return apology("Invalid birthdate", 403)
         hash = generate_password_hash(password)
 
