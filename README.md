@@ -41,7 +41,7 @@ Watch the project video for a detailed walkthrough of Improov's features and fun
 - **Course**: CS50x by Harvard University
 - **Inspiration**: Self-improvement and meaningful social connections
 
-## What's the Catch
+## What's the Catch?
 Read this post from Improov!
 ![GRBH9fBWUAAq02u](https://github.com/user-attachments/assets/4fa20ec4-55c2-49e6-b48d-b89e77c571af)
 
