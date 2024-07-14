@@ -10,6 +10,7 @@ Welcome to Improov! Improov is a new kind of social media app focused on self-im
 - [Usage](#usage)
 - [Project Video](#project-video)
 - [Credits](#credits)
+- [What's the Catch?](#what's-the-catch)
 
   ## Features
 Improov offers a range of features designed to enhance your self-improvement journey:
@@ -39,6 +40,11 @@ Watch the project video for a detailed walkthrough of Improov's features and fun
 - **Creator**: [Vedesh P](https://github.com/VedeshP)
 - **Course**: CS50x by Harvard University
 - **Inspiration**: Self-improvement and meaningful social connections
+
+## What's the Catch
+Read this post from Improov!
+![GRBH9fBWUAAq02u](https://github.com/user-attachments/assets/4fa20ec4-55c2-49e6-b48d-b89e77c571af)
+
 
 ---
 
