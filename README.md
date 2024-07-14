@@ -10,7 +10,7 @@ Welcome to Improov! Improov is a new kind of social media app focused on self-im
 - [Usage](#usage)
 - [Project Video](#project-video)
 - [Credits](#credits)
-- [What's the Catch?](#what's-the-catch)
+- [What's the Catch?](#what's-the-catch?)
 
   ## Features
 Improov offers a range of features designed to enhance your self-improvement journey:
