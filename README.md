@@ -1,5 +1,8 @@
+[<img src="https://github.com/user-attachments/assets/dca90755-5871-498a-8016-81ab8ec057e4" width="69">](https://improov.onrender.com)
+
 # IMPROOV
-#### Video Demo: <>
+
+#### Video Demo: <https://youtu.be/wml9ENTHdNA>
 #### Description:
 
 Welcome to Improov! Improov is a new kind of social media app focused on self-improvement. It allows users to share and discover valuable content that helps them grow in mind, body, and soul. It helps you provide and consume content that is actually meaningful in your life.
@@ -34,7 +37,7 @@ You can access the live application at [improov.onrender.com](https://improov.on
 ## Project Video
 Watch the project video for a detailed walkthrough of Improov's features and functionalities:
 
-[![Improov Project Video](https://img.youtube.com/vi/your-video-id/0.jpg)](https://www.youtube.com/watch?v=your-video-id)
+[![Improov Project Video](https://img.youtube.com/vi/wml9ENTHdNA/0.jpg)](https://youtu.be/wml9ENTHdNA)
 
 ## Credits
 - **Creator**: [Vedesh P](https://github.com/VedeshP)
