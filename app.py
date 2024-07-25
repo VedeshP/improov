@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 import datetime
 
-from helpers import login_required, apology, check_password_strength_basic, embed_link, export_db
+from helpers import login_required, apology, check_password_strength_basic, embed_link, export_db, send_welcome_email
 
 #from urllib.parse import urlparse, parse_qs
 
@@ -216,6 +216,7 @@ def signup():
             db.session.rollback()
             return apology("An unexpected error occurred: " + str(e))
         
+        send_welcome_email(email, display_name)
 
         flash("Signed Up! Login to proceed")
         return redirect("/login")

@@ -7,6 +7,9 @@ from pyembed.core import PyEmbed
 from pyembed.core.consumer import PyEmbedConsumerError
 
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import os
 
 pyembed_instance = PyEmbed()
 
@@ -119,6 +122,47 @@ def embed_link(link_text):
 def export_db():
     file_path = 'instance/improov.db'
     return send_file(file_path, as_attachment=True, download_name='improov_backup.db')
+
+
+
+def send_welcome_email(to_send_email, display_name):
+    sender_email = "improovbyvp@gmail.com"
+    receiver_email = to_send_email
+    sender_password =  os.getenv("GMAIL_PASSWORD") # or use your password directly for testing
+    subject = "Welcome to Improov!"
+    body = f"""
+    <html>
+    <body>
+        <h1>Welcome to <span style="color: #8c0cfb">Improov!</span> 🎉</h1>
+        Dear {display_name}, 
+        <p>We’re thrilled to have you join our community. By signing up, you’ve taken a meaningful step towards a more balanced and enriching digital experience.</p>
+        <p>Explore, connect, and start your journey towards self-improvement with us. If you have any questions, we’re here to help at [support email].</p>
+        <p>Thank you for joining us. Let’s make every day a step towards a better you.</p>
+        <p>Thank you for signing up.</p>
+        <a href="https://improov.onrender.com/">
+            <img src="http://res.cloudinary.com/dwi054oye/image/upload/v1719914930/robl9rlinggqnos4d5pr.png" alt="Logo" style="height: 128px; width: 128px; border-radius: 12px;">
+        </a>
+        <p>Best regards,</p>
+        <p>The Improov Team</p>
+    </body>
+    </html>
+    """
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'html'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, receiver_email, msg.as_string())
+            print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+
 
 # # Function to generate rich previews using PyEmbed
 # def generate_preview(url):
