@@ -6,6 +6,8 @@ import aiohttp
 from pyembed.core import PyEmbed
 from pyembed.core.consumer import PyEmbedConsumerError
 
+import smtplib
+
 pyembed_instance = PyEmbed()
 
 def login_required(f):
