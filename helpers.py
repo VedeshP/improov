@@ -136,7 +136,7 @@ def send_welcome_email(to_send_email, display_name):
         <h1>Welcome to <span style="color: #8c0cfb">Improov!</span> 🎉</h1>
         Dear {display_name}, 
         <p>We’re thrilled to have you join our community. By signing up, you’ve taken a meaningful step towards a more balanced and enriching digital experience.</p>
-        <p>Explore, connect, and start your journey towards self-improvement with us. If you have any questions, we’re here to help at [support email].</p>
+        <p>Explore, connect, and start your journey towards self-improvement with us. If you have any questions, we’re here to help at <a href="mailto:improovbyvp@gmail.com">improovbyvp@gmail.com</a>.</p>
         <p>Thank you for joining us. Let’s make every day a step towards a better you.</p>
         <p>Thank you for signing up.</p>
         <a href="https://improov.onrender.com/">
